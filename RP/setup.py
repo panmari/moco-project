@@ -10,4 +10,4 @@ setup(
 	author_email = "None",
 	scripts = ['rp.py'],
 	packages = ['RP'],
-	install_requires = ["setuptools", 'scapy'])
+	install_requires = ["setuptools", 'scapy', 'pykka'])
