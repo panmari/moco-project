@@ -3,19 +3,11 @@ from scapy.all import PcapReader, TCP, NoPayload, IP
 import re
 from socket import gethostbyaddr
 import functools
+from helpers import lazy, memoize
 
 GET = re.compile('GET (.*) .*')
 
-def memoize(obj):
-    cache = {}
-
-    @functools.wraps(obj)
-    def memoizer(*args, **kwargs):
-        if args not in cache:
-            cache[args] = obj(*args, **kwargs)
-        return cache[args]
-    return memoizer
-
+@lazy()
 @memoize
 def reverse_dns(ip):
     try:
@@ -36,9 +28,10 @@ class HttpHandler(object):
             print("Package has no TCP layer:")
             print(pkg.summary())
         tcp_pkg = pkg[TCP]
+        server_name = reverse_dns(pkg[IP].dst)
         match = GET.match(str(tcp_pkg.payload))
         if match:
-            print("http://{}/{}".format(str(reverse_dns(pkg[IP].dst)), match.group(1)))
+            print("http://{}/{}".format(str(server_name()), match.group(1)))
 
 
 class PcapEvents(object):
@@ -65,13 +58,18 @@ class PcapEvents(object):
         return self
 
     def all_packages(self):
+        self._running = True
         try:
-            while True:
+            while self._running:
                 yield self.next()
         except StopIteration:
             self.stop()
 
+    def kill(self, *args):
+        self._running = False
+
 if '__main__' == __name__:
+    from signal import signal, SIGINT
     import sys, os.path
 
     path = os.path.expanduser(sys.argv[1])
@@ -80,5 +78,6 @@ if '__main__' == __name__:
     evts = PcapEvents(pcap_file)
     http = HttpHandler()
     evts[http.accept]= http.print
+    signal(SIGINT, evts.kill)
     for pkg in evts.all_packages():
         pass
