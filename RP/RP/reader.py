@@ -2,7 +2,6 @@ from __future__ import print_function
 from scapy.all import PcapReader, TCP, NoPayload, IP
 import re
 from socket import gethostbyaddr
-import functools
 from helpers import lazy, memoize
 
 GET = re.compile('GET (.*) .*')
@@ -24,18 +23,19 @@ class HttpHandler(object):
         return True
 
     def print(self, pkg):
-        if not pkg.haslayer(TCP): 
-            print("Package has no TCP layer:")
-            print(pkg.summary())
         tcp_pkg = pkg[TCP]
         server_name = reverse_dns(pkg[IP].dst)
         match = GET.match(str(tcp_pkg.payload))
         if match:
             print("http://{}/{}".format(str(server_name()), match.group(1)))
 
+class IpBin(HttpHandler):
+    def __init__(self, ip):
+        pass
 
 class PcapEvents(object):
-    "Calls observers if their predicate applies to a package from the stream"
+    """Calls observers if their predicate applies to a package from the stream.
+    Thread-safeish. Only iterate at one location."""
     def __init__(self, reader):
         self._reader = reader
         self._observers = {}
@@ -45,9 +45,10 @@ class PcapEvents(object):
 
     def handler(self, filter, callback):
         "sets a callback, if the given filter applies to a package"
-        self._observers[filter] = callback
+        self._observers[filter] = lazy()(callback)
 
     def next(self):
+        "Processes the next package and yields it"
         pkg = next(self._reader)
         for filter, callback in self._observers.items():
             if filter(pkg):
@@ -63,7 +64,7 @@ class PcapEvents(object):
             while self._running:
                 yield self.next()
         except StopIteration:
-            self.stop()
+            self._running = False
 
     def kill(self, *args):
         self._running = False
