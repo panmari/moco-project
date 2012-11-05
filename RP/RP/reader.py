@@ -72,8 +72,11 @@ class PcapEvents(object):
 if '__main__' == __name__:
     from signal import signal, SIGINT
     import sys, os.path
-
-    path = os.path.expanduser(sys.argv[1])
+    try:
+        path = os.path.expanduser(sys.argv[1])
+    except IndexError:
+        print("No file was given as argument, terminating")
+        sys.exit()
     print("# Starting on {}".format(path))
     pcap_file = PcapReader(path)
     evts = PcapEvents(pcap_file)
