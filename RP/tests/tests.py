@@ -7,11 +7,12 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.file = PcapReader("../onlyIEEEorgaPackets.pcap")
+        self.file = PcapReader("../onlyAck")
 
     def testShouldParseEvents(self):
         evts = PcapEvents(self.file)
-        print evts.next()
+        #TODO: write some useful test
+        #print "" + evts.next()
 
     def testFirstEventShouldNotBeHTTP(self):
         evts = PcapEvents(self.file)
