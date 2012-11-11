@@ -2,7 +2,12 @@ from __future__ import print_function
 from scapy.all import PcapReader, TCP, NoPayload, IP
 import re
 from socket import gethostbyaddr
-from helpers import lazy, memoize
+from helpers import memoize, do
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from helpers import memoize
+
+import logging
+logger = logging.getLogger('Reader')
 
 GET = re.compile('GET (.*) .*')
 
@@ -58,7 +63,7 @@ class PcapEvents(object):
 
     def handler(self, filter, callback):
         "sets a callback, if the given filter applies to a package"
-        self._observers[filter] = lazy()(callback)
+        self._observers[filter] = (callback)
 
     def next(self):
         "Processes the next package and yields it"
