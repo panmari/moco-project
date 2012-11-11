@@ -93,7 +93,11 @@ class PcapEvents(object):
 if '__main__' == __name__:
     logging.basicConfig(level = logging.WARN)
     import sys, os.path
-
+    try:
+        path = os.path.expanduser(sys.argv[1])
+    except IndexError:
+        print("No file was given as argument, terminating")
+        sys.exit()
     path = os.path.expanduser(sys.argv[1])
     logger.info("# Starting on {}".format(path))
     pcap_file = PcapReader(path)
