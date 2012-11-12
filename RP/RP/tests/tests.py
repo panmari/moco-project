@@ -1,14 +1,9 @@
 import unittest
 from scapy.all import PcapReader
 from ..reader import PcapEvents, HttpHandler
-import os.path, sys
-
-def relative(p):
-    return os.path.join(os.path.dirname(__file__), p)
+from .helpers import *
 
 class Test(unittest.TestCase):
-
-
     def setUp(self):
         self.file = PcapReader(relative("onlyAck"))
 
