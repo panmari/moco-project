@@ -55,6 +55,8 @@ class PcapEvents(object):
     """Calls observers if their predicate applies to a package from the stream.
     Thread-safeish. Only iterate at one location."""
     def __init__(self, reader):
+        if isinstance(reader, str):
+            reader = PcapReader(reader)
         self._reader = reader
         self._observers = {}
 
@@ -91,7 +93,7 @@ class PcapEvents(object):
         do(self)
 
 if '__main__' == __name__:
-    logging.basicConfig(level = logging.WARN)
+    logging.basicConfig(level = logging.INFO)
     import sys, os.path
     try:
         path = os.path.expanduser(sys.argv[1])
