@@ -4,7 +4,6 @@ import re
 from socket import gethostbyaddr
 from helpers import memoize, do
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
-from helpers import memoize
 
 import logging
 logger = logging.getLogger('Reader')
