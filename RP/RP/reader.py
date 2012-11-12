@@ -31,6 +31,8 @@ class HttpHandler(object):
         if not (tcp_pkg.dport == 80 or tcp_pkg.sport == 80): return False
         if isinstance(tcp_pkg.payload, NoPayload): return False
         return True
+    def handle(self, pkg):
+        self.print(pkg)
 
     def print(self, pkg):
         logger.debug("got a package %s to print", pkg)
