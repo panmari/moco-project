@@ -23,6 +23,14 @@ def reverse_dns(ip):
     return _dns_thread_pool.submit(lookup)
 
 class HttpHandler(object):
+    """Has callbacks that are invoked by the event system.
+
+    It only accepts packets if:
+        * They are HTTP GET requests
+        * send or received by the IP given. If none is given, every
+          IP is accepted.
+    
+    Subclass and overwrite handle for great good."""
     def __init__(self, ip = None):
         self.ip = ip
 
