@@ -26,7 +26,7 @@ class HttpHandler(object):
     """Has callbacks that are invoked by the event system.
 
     It only accepts packets if:
-        * They are HTTP GET requests
+        * They are HTTP requests
         * send or received by the IP given. If none is given, every
           IP is accepted.
     
