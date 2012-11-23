@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "TODO")
     parser.add_argument('-V', '--version', action='version', version = '%(prog)s {}'.format(version))
     parser.add_argument('-v', '--verbose', action='store_true')
-    #parser.add_argument('-i', '--ip', type = str, default=None) # TODO
+    parser.add_argument('-i', '--ip', type = str, default=None)
     parser.add_argument('-t', '--type', action='append', type = listener, default=[])
     parser.add_argument('file', metavar='FILE', nargs=1)
     args = parser.parse_args()
@@ -23,5 +23,6 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level = logging.INFO)
     for listener in args.type:
+        listener.ip = args.ip
         events[listener.accept] = listener.handle
     events.all_packages()

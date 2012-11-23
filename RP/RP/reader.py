@@ -23,13 +23,19 @@ def reverse_dns(ip):
     return _dns_thread_pool.submit(lookup)
 
 class HttpHandler(object):
+    def __init__(self, ip = None):
+        self.ip = ip
+
     def accept(self, pkg):
         logger.debug("Accepting? %s", pkg.summary())
         if not pkg.haslayer(TCP): return False
         tcp_pkg = pkg[TCP]
         if not (tcp_pkg.dport == 80 or tcp_pkg.sport == 80): return False
         if isinstance(tcp_pkg.payload, NoPayload): return False
-        return True
+        if self.ip is not None: 
+            return pkg[IP].src == self.ip or pkg[IP].dst == self.ip
+        else:
+            return True
     def handle(self, pkg):
         self.print(pkg)
 
@@ -44,13 +50,6 @@ class HttpHandler(object):
             except TimeoutError:
                 logger.info("http://{}/{}".format(str(pkg[IP].dst), match.group(1)))
 
-class IpBin(HttpHandler):
-    def __init__(self, ip):
-        self.ip = ip
-    def accept(self, pkg):
-        if not HttpHandler.accept(pkg): return False
-
-        return pkg[TCP].src == self.ip or pkg[TCP].dest == self.ip
 
 class PcapEvents(object):
     """Calls observers if their predicate applies to a package from the stream.
