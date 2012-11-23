@@ -1,5 +1,5 @@
 from __future__ import print_function
-from scapy.all import PcapReader, TCP, NoPayload, IP
+from scapy.all import PcapReader, TCP, NoPayload, IP, sniff
 import re
 from socket import gethostbyaddr
 from helpers import memoize, do
@@ -75,9 +75,7 @@ class PcapEvents(object):
         "sets a callback, if the given filter applies to a package"
         self._observers[filter] = (callback)
 
-    def next(self):
-        "Processes the next package and yields it"
-        pkg = next(self._reader)
+    def handle_packet(self, pkg):
         def do_callback(tuple):
             logger.debug("Doing callback for %s", tuple)
             filter, callback = tuple
@@ -94,11 +92,19 @@ class PcapEvents(object):
             do(e.map(do_callback, self._observers.items()))
         return pkg
 
+    def next(self):
+        "Processes the next package and yields it"
+        pkg = next(self._reader)
+        return self.handle_packet(pkg)
+
     def __iter__(self):
         return self
 
     def all_packages(self):
         do(self)
+
+    def setup_sniffer(self):
+        sniff(prn=self.handle_packet, filter="tcp", store=0)
 
 if '__main__' == __name__:
     logging.basicConfig(level = logging.INFO)
