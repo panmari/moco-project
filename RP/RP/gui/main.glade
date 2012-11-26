@@ -107,6 +107,11 @@ Panmari</property>
       <!-- column-name ip -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">asdf</col>
+      </row>
+    </data>
   </object>
   <object class="GtkWindow" id="main">
     <property name="width_request">800</property>
@@ -289,6 +294,19 @@ Panmari</property>
                 <property name="model">liststore</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="ip">
+                    <property name="title" translatable="yes">Ip</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext1">
+                        <property name="placeholder_text">None</property>
+                      </object>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
