@@ -1,6 +1,7 @@
 import sys
 import gtk
 import RP
+from pprint import pprint 
 
 class gui:
 
@@ -10,15 +11,29 @@ class gui:
         builder.connect_signals(self)
         self.window = builder.get_object("main")
         self.output_window = builder.get_object("output_window")
+        self.file_chooser = builder.get_object("filechooserdialog")
+       # pprint (dir(self.output_window), indent=2)
         
     def open_file(self, widget):
-        self.output_window.insert "blah"
-    
+        self.file_chooser.show()
+        blah = self.output_window.get_buffer()
+        blah.set_text("123")
+        
+    def file_chosen(self, widget):
+        print widget
+        self.file_chooser.hide()
+        
+    def file_cancel(self, widget):
+        self.file_chooser.hide()
+        
     def print_gui(self, widget):
         print "blub"
 
-    def on_window_destroy(self, widget, data=None):
+    def quit(self, widget):
         gtk.main_quit()
+        print "Cleaning up .."
+        #TODO: cleanup
+        sys.exit(1)
     
 if __name__ == "__main__":
     gui_instance = gui()
