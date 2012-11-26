@@ -12,6 +12,8 @@ class gui:
         self.window = builder.get_object("main")
         self.output_window = builder.get_object("output_window")
         self.file_chooser = builder.get_object("filechooserdialog")
+        self.statusbar = builder.get_object("statusbar")
+        self.statusbar.push(0, "No file chosen yet...")
        # pprint (dir(self.output_window), indent=2)
         
     def open_file(self, widget):
@@ -27,8 +29,10 @@ class gui:
             print "no file chosen! aborting"
             
     def file_chosen(self, widget):
-        self.pcap_file = self.file_chooser.get_file
+        self.pcap_file = self.file_chooser.get_filename()
         self.file_chooser.hide()
+        self.statusbar.push(0, "Active file: " + self.pcap_file)
+
         
     def file_cancel(self, widget):
         self.file_chooser.hide()
