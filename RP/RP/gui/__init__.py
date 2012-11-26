@@ -19,8 +19,15 @@ class gui:
         blah = self.output_window.get_buffer()
         blah.set_text("123")
         
+    def start_parsing(self, widget):
+        try:
+            print "Parsing..."
+            #do something with self.pcap_file
+        except:
+            print "no file chosen! aborting"
+            
     def file_chosen(self, widget):
-        print widget
+        self.pcap_file = self.file_chooser.get_file
         self.file_chooser.hide()
         
     def file_cancel(self, widget):
