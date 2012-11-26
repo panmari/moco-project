@@ -35,6 +35,10 @@ class gui:
         self.file_chooser.hide()
         self.statusbar.push(1, "Active file: " + self.pcap_file)
 
+    def select_ip(self, widget):
+        (model, iter) = widget.get_selected()
+        value = model.get_value(iter, 0)
+        self.output_window.get_buffer().insert_at_cursor(value + "\n")
         
     def file_cancel(self, widget):
         self.file_chooser.hide()

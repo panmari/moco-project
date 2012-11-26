@@ -293,7 +293,9 @@ Panmari</property>
                 <property name="can_focus">True</property>
                 <property name="model">liststore</property>
                 <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                  <object class="GtkTreeSelection" id="treeview-selection1">
+                    <signal name="changed" handler="select_ip" swapped="no"/>
+                  </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="ip">
