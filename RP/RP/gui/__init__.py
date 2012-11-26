@@ -15,6 +15,8 @@ class gui:
         self.statusbar = builder.get_object("statusbar")
         self.statusbar.push(0, "No file chosen yet...")
         self.about = builder.get_object("aboutdialog")
+        self.ip_list = builder.get_object("liststore")
+        self.ip_list.append(None, ['blah'])
        # pprint (dir(self.output_window), indent=2)
         
     def open_file(self, widget):
