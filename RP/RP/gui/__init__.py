@@ -15,6 +15,7 @@ class gui:
         self.statusbar = builder.get_object("statusbar")
         self.statusbar.push(0, "No file chosen yet...")
         self.about = builder.get_object("aboutdialog")
+        self.about.set_version("version")
         self.ip_list = builder.get_object("liststore")
         self.ip_list.append(["blah!"])
         
@@ -52,8 +53,11 @@ class gui:
         #TODO: cleanup
         sys.exit(1)
         
-    def open_about(self, widget):
+    def about_open(self, widget):
         self.about.show()
+        
+    def about_close(self, widget, data):
+        self.about.hide()
     
 if __name__ == "__main__":
     gui_instance = gui()
