@@ -1,7 +1,8 @@
 import sys
 import gtk
+import scapy
 from RP import reader
-from pprint import pprint 
+from pprint import pprint
 
 class gui:
 
@@ -27,9 +28,8 @@ class gui:
     def start_parsing(self, widget):
         try:
             reader.start_parsing(self.pcap_file)
-                
-        except:
-            self.statusbar.push(3, "no file chosen! aborting")
+        except Exception as e:
+            self.statusbar.push(3, e[0])
             raise 
             
     def file_chosen(self, widget):
