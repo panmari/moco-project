@@ -1,6 +1,6 @@
 import sys
 import gtk
-import RP
+from RP import reader
 from pprint import pprint 
 
 class gui:
@@ -26,10 +26,11 @@ class gui:
         
     def start_parsing(self, widget):
         try:
-            print "Parsing..."
-            #do something with self.pcap_file
+            reader.start_parsing(self.pcap_file)
+                
         except:
             self.statusbar.push(3, "no file chosen! aborting")
+            raise 
             
     def file_chosen(self, widget):
         self.pcap_file = self.file_chooser.get_filename()

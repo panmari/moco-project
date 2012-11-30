@@ -4,6 +4,7 @@ import re
 from socket import gethostbyaddr
 from helpers import memoize, do
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from gtk import ListStore
 
 import logging
 logger = logging.getLogger('Reader')
@@ -33,6 +34,7 @@ class HttpHandler(object):
     Subclass and overwrite handle for great good."""
     def __init__(self, ip = None):
         self.ip = ip
+        self.gtk_list_store = ListStore(str)
 
     def accept(self, pkg):
         logger.debug("Accepting? %s", pkg.summary())
@@ -44,6 +46,7 @@ class HttpHandler(object):
             return pkg[IP].src == self.ip or pkg[IP].dst == self.ip
         else:
             return True
+        
     def handle(self, pkg):
         self.print(pkg)
 
@@ -54,9 +57,11 @@ class HttpHandler(object):
         match = GET.match(str(tcp_pkg.payload))
         if match:
             try:
-                logger.info("http://{}/{}".format(str(server_name.result(5.0)), match.group(1)))
+                entry = "http://{}/{}".format(str(server_name.result(5.0)), match.group(1))
             except TimeoutError:
-                logger.info("http://{}/{}".format(str(pkg[IP].dst), match.group(1)))
+                entry = "http://{}/{}".format(str(pkg[IP].dst), match.group(1))
+            logger.info(entry)
+            self.gtk_list_store.append(entry)
 
 
 class PcapEvents(object):
@@ -106,6 +111,13 @@ class PcapEvents(object):
     def setup_sniffer(self):
         sniff(prn=self.handle_packet, filter="tcp", store=0)
 
+def start_parsing(path):
+    pcap_file = PcapReader(path)
+    evts = PcapEvents(pcap_file)
+    http = HttpHandler()
+    evts[http.accept]= http.print
+    evts.all_packages()
+    
 if '__main__' == __name__:
     logging.basicConfig(level = logging.INFO)
     import sys, os.path
@@ -116,8 +128,4 @@ if '__main__' == __name__:
         sys.exit()
     path = os.path.expanduser(sys.argv[1])
     logger.info("# Starting on {}".format(path))
-    pcap_file = PcapReader(path)
-    evts = PcapEvents(pcap_file)
-    http = HttpHandler()
-    evts[http.accept]= http.print
-    evts.all_packages()
+    start_parsing(path)
