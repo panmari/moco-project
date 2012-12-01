@@ -1,3 +1,3 @@
 "TODO"
-version="0.1"
+version="0.2"
 from .reader import HttpHandler, PcapEvents

@@ -25,8 +25,10 @@
     <property name="license" translatable="yes">Do what the fuck you want, just don't blame us.</property>
     <property name="authors">Zombiecalypse
 Panmari</property>
+    <property name="logo">puke_rainbow.png</property>
     <signal name="close" handler="about_close" swapped="no"/>
     <signal name="destroy" handler="about_close" swapped="no"/>
+    <signal name="destroy-event" handler="about_close" swapped="no"/>
     <signal name="response" handler="about_close" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">

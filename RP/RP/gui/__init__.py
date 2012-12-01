@@ -2,6 +2,7 @@ import sys
 import gtk
 import scapy
 from RP import reader
+from RP import version
 from pprint import pprint
 
 class gui:
@@ -15,7 +16,7 @@ class gui:
         self.statusbar = builder.get_object("statusbar")
         self.statusbar.push(0, "No file chosen yet...")
         self.about = builder.get_object("aboutdialog")
-        self.about.set_version("version")
+        self.about.set_version(version)
         self.packages_treeview = builder.get_object("packages_treeview")
         self.ip_list = builder.get_object("liststore")
         self.ip_list.append(["blah!"])
@@ -52,9 +53,9 @@ class gui:
         sys.exit(1)
         
     def about_open(self, widget):
-        self.about.show()
+        self.about.run()
         
-    def about_close(self, widget, data):
+    def about_close(self, widget, data=None):
         self.about.hide()
     
 if __name__ == "__main__":
