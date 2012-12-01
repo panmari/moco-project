@@ -51,6 +51,17 @@ Panmari</property>
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="liststore">
+    <columns>
+      <!-- column-name ip -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">asdf</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkFileChooserDialog" id="filechooserdialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -110,17 +121,6 @@ Panmari</property>
       <action-widget response="-1">button2</action-widget>
       <action-widget response="0">button1</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkListStore" id="liststore">
-    <columns>
-      <!-- column-name ip -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">asdf</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="main">
     <property name="width_request">800</property>
@@ -293,7 +293,7 @@ Panmari</property>
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkTreeView" id="treeview2">
+                  <object class="GtkTreeView" id="packages_treeview">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <child internal-child="selection">
@@ -301,6 +301,7 @@ Panmari</property>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                        <property name="min_width">2</property>
                         <property name="title" translatable="yes">Packages</property>
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext2"/>

@@ -11,7 +11,6 @@ class gui:
         builder.add_from_file("main.glade") 
         builder.connect_signals(self)
         self.window = builder.get_object("main")
-        self.output_window = builder.get_object("output_window")
         self.file_chooser = builder.get_object("filechooserdialog")
         self.statusbar = builder.get_object("statusbar")
         self.statusbar.push(0, "No file chosen yet...")
@@ -23,14 +22,13 @@ class gui:
         
     def open_file(self, widget):
         self.file_chooser.show()
-        blah = self.output_window.get_buffer()
-        blah.set_text("123")
         
     def start_parsing(self, widget):
         try:
             reader.start_parsing(self.pcap_file)
         except Exception as e:
             self.statusbar.push(3, e[0])
+            #raise error for debugging
             raise 
             
     def file_chosen(self, widget):
@@ -43,13 +41,9 @@ class gui:
         value = model.get_value(iter, 0)
         #TODO: get the ListStore for the respective model
         #self.packages_view.set_model(some_model)
-        self.output_window.get_buffer().insert_at_cursor(value + "\n")
         
     def file_cancel(self, widget):
         self.file_chooser.hide()
-        
-    def print_gui(self, widget):
-        print "blub"
 
     def quit(self, widget):
         gtk.main_quit()
