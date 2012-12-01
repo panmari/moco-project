@@ -17,6 +17,7 @@ class gui:
         self.statusbar.push(0, "No file chosen yet...")
         self.about = builder.get_object("aboutdialog")
         self.about.set_version("version")
+        self.packages_treeview = builder.get_object("packages_treeview")
         self.ip_list = builder.get_object("liststore")
         self.ip_list.append(["blah!"])
         
@@ -40,6 +41,8 @@ class gui:
     def select_ip(self, widget):
         (model, iter) = widget.get_selected()
         value = model.get_value(iter, 0)
+        #TODO: get the ListStore for the respective model
+        #self.packages_view.set_model(some_model)
         self.output_window.get_buffer().insert_at_cursor(value + "\n")
         
     def file_cancel(self, widget):
