@@ -263,7 +263,6 @@ Panmari</property>
                     <property name="title" translatable="yes">Ip</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext1">
-                        <property name="placeholder_text">None</property>
                       </object>
                       <attributes>
                         <attribute name="text">0</attribute>
