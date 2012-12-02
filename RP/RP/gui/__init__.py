@@ -26,15 +26,17 @@ class gui:
         
     def start_parsing(self, widget):
         try:
-            reader.start_parsing(self.pcap_file)
+            #todo: do this in new thread
+            http_handler = reader.start_parsing(self.pcap_file) 
+            self.packages_treeview.set_model(http_handler.gtk_list_store)
         except Exception as e:
             self.statusbar.push(3, e[0])
             #raise error for debugging
             raise 
             
     def file_chosen(self, widget):
-        self.pcap_file = self.file_chooser.get_filename()
-        self.file_chooser.hide()
+        self.pcap_file = widget.get_filename()
+        widget.hide()
         self.statusbar.push(1, "Active file: " + self.pcap_file)
 
     def select_ip(self, widget):
@@ -56,7 +58,7 @@ class gui:
         self.about.run()
         
     def about_close(self, widget, data=None):
-        self.about.hide()
+        widget.hide()
     
 if __name__ == "__main__":
     gui_instance = gui()

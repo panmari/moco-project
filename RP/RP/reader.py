@@ -117,6 +117,7 @@ def start_parsing(path):
     http = HttpHandler()
     evts[http.accept]= http.print
     evts.all_packages()
+    return http
     
 if '__main__' == __name__:
     logging.basicConfig(level = logging.INFO)
