@@ -4,6 +4,7 @@ import re
 from socket import gethostbyaddr
 from helpers import memoize, do
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from threading import Thread
 from gtk import ListStore
 
 import logging
@@ -116,7 +117,9 @@ def start_parsing(path):
     evts = PcapEvents(pcap_file)
     http = HttpHandler()
     evts[http.accept]= http.print
-    evts.all_packages()
+    thread = Thread(target=evts.all_packages)
+    thread.daemon= (True)
+    thread.start()
     return http
     
 if '__main__' == __name__:

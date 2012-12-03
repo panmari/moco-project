@@ -4,6 +4,7 @@ Created on Dec 2, 2012
 @author: mazzzy
 '''
 import unittest
+import gtk
 from RP.gui import gui
 
 class Test(unittest.TestCase):
@@ -11,7 +12,9 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         self.gui_instance = gui()
-
+        self.gui_instance.pcap_file = "../../medienkomm"
+        self.gui_instance.main.show()
+        gtk.main()
 
     def tearDown(self):
         pass
