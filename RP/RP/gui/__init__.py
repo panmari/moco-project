@@ -1,6 +1,7 @@
 import sys
 import gtk
 import scapy
+import os.path
 from RP import reader
 from RP import version
 from pprint import pprint
@@ -9,9 +10,9 @@ class gui:
 
     def __init__( self ):
         builder = gtk.Builder()
-        builder.add_from_file("main.glade") 
+        builder.add_from_file(os.path.join(os.path.dirname(__file__), "main.glade")) 
         builder.connect_signals(self)
-        self.window = builder.get_object("main")
+        self.main = builder.get_object("main")
         self.file_chooser = builder.get_object("filechooserdialog")
         self.statusbar = builder.get_object("statusbar")
         self.statusbar.push(0, "No file chosen yet...")
@@ -30,10 +31,11 @@ class gui:
             http_handler = reader.start_parsing(self.pcap_file) 
             self.packages_treeview.set_model(http_handler.gtk_list_store)
         except Exception as e:
-            self.statusbar.push(3, e[0])
+            print e
+            self.statusbar.push(3, str(e))
             #raise error for debugging
             raise 
-            
+    
     def file_chosen(self, widget):
         self.pcap_file = widget.get_filename()
         widget.hide()
@@ -62,7 +64,6 @@ class gui:
     
 if __name__ == "__main__":
     gui_instance = gui()
-
-    gui_instance.window.show()
+    gui_instance.main.show()
     gtk.main()
 
