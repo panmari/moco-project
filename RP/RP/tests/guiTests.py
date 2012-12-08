@@ -9,9 +9,10 @@ import logging
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level = logging.INFO)
+    logging.basicConfig(level = logging.DEBUG)
     gui_instance = Gui()
-    gui_instance.pcap_file = "../../medienkomm"
     gui_instance.main.show()
-    gtk.main()
+    gui_instance.pcap_file = "../../medienkomm"
     gui_instance.start_parsing(None)
+    gtk.main()
+    
