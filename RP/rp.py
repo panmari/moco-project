@@ -31,10 +31,11 @@ if __name__ == '__main__':
         gui = RP.gui.Gui()
         gui.main.show()
         gtk.main()
-    for listener in args.type:
-        listener.ip = args.ip
-        events[listener.accept] = listener.handle
-    if args.sniff:
-        events.setup_sniffer()
     else:
-        events.all_packages()
+        for listener in args.type:
+            listener.ip = args.ip
+            events[listener.accept] = listener.handle
+        if args.sniff:
+            events.setup_sniffer()
+        else:
+            events.all_packages()
