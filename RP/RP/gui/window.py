@@ -31,12 +31,16 @@ class Gui:
             self.gui_logger.debug("start parsing on {}".format(self.pcap_file))
             http_handler, thread = reader.start_parsing(self.pcap_file) 
             self.packages_treeview.set_model(http_handler.gtk_list_store)
+            http_handler.on_new_ip(self.new_ip)
             thread.start()
         except Exception as e:
             print e
             self.statusbar.push(3, str(e))
             self.gui_logger.warn(str(e))
             raise e
+
+    def new_ip(self, ip):
+        self.gui_logger.info("New IP: {}".format(ip))
     
     def file_chosen(self, widget):
         self.pcap_file = widget.get_filename()

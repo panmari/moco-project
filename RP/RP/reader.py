@@ -45,30 +45,53 @@ class HttpHandler(object):
         tcp_pkg = pkg[TCP]
         if not (tcp_pkg.dport == 80 or tcp_pkg.sport == 80): return False
         if isinstance(tcp_pkg.payload, NoPayload): return False
+        if not GET.match(str(tcp_pkg.payload)): return False
         if self.ip is not None: 
             return pkg[IP].src == self.ip or pkg[IP].dst == self.ip
         else:
             return True
-        
     def handle(self, pkg):
         self.print(pkg)
 
     def print(self, pkg):
-        logger.debug("got a package %s to print", pkg)
+        logger.debug("got a package %s to print", pkg.summary())
         time = datetime.fromtimestamp(pkg.time)
         logger.debug("initially at time={}".format(time))
         tcp_pkg = pkg[TCP]
         server_name = reverse_dns(pkg[IP].dst)
         match = GET.match(str(tcp_pkg.payload))
-        if match:
-            try:
-                entry = "http://{}/{}".format(str(server_name.result(5.0)), match.group(1))
-            except TimeoutError:
-                entry = "http://{}/{}".format(str(pkg[IP].dst), match.group(1))
-            logger.info(entry)
-            iter = self.gtk_list_store.append()
-            self.gtk_list_store.set(iter, 0, str(time))
-            self.gtk_list_store.set(iter, 1, entry)
+        try:
+            entry = "http://{}{}".format(str(server_name.result(5.0)), match.group(1))
+        except TimeoutError:
+            entry = "http://{}{}".format(str(pkg[IP].dst), match.group(1))
+        logger.info(entry)
+        self.gtk_list_store.append([str(time), entry])
+
+class QueenHandler(HttpHandler):
+    def __init__(self):
+        HttpHandler.__init__(self)
+        self.children = {}
+        self.ip_callbacks = []
+    def handle(self, pkg):
+        server_name = reverse_dns(pkg[IP].dst)
+        logger.debug("got a package %s to print", pkg.summary())
+        time = datetime.fromtimestamp(pkg.time)
+        logger.debug("initially at time={}".format(time))
+        tcp_pkg = pkg[TCP]
+        if pkg[IP].src not in self.children:
+            self.children[pkg[IP].src] = HttpHandler(pkg[IP].src)
+            for f in self.ip_callbacks:
+                f(pkg[IP].src)
+        self.children[pkg[IP].src].handle(pkg)
+        match = GET.match(str(tcp_pkg.payload))
+        try:
+            entry = "http://{}{}".format(str(server_name.result(5.0)), match.group(1))
+        except TimeoutError:
+            entry = "http://{}{}".format(str(pkg[IP].dst), match.group(1))
+        logger.info(entry)
+        self.gtk_list_store.append([str(time), entry])
+    def on_new_ip(self, callback):
+        self.ip_callbacks.append(callback)
 
 
 class PcapEvents(object):
@@ -121,7 +144,7 @@ class PcapEvents(object):
 def start_parsing(path):
     pcap_file = PcapReader(path)
     evts = PcapEvents(pcap_file)
-    http = HttpHandler()
+    http = QueenHandler()
     evts[http.accept]= http.handle
     thread = Thread(target=evts.all_packages)
     thread.daemon = True
