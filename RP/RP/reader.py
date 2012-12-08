@@ -93,6 +93,9 @@ class QueenHandler(HttpHandler):
     def on_new_ip(self, callback):
         self.ip_callbacks.append(callback)
 
+    def list_store_for(self, ip):
+        self.children[ip].gtk_list_store
+
 
 class PcapEvents(object):
     """Calls observers if their predicate applies to a package from the stream.
