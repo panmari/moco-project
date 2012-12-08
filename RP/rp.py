@@ -19,12 +19,18 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--type', action='append', type = listener,
             default=[], help = "Supported: http")
     parser.add_argument('file', metavar='FILE', nargs='?')
+    parser.add_argument('-g', '--gui', action='store_true')
     args = parser.parse_args()
     events = RP.PcapEvents(args.file)
     if args.verbose:
         logging.basicConfig(level = logging.DEBUG)
     else:
         logging.basicConfig(level = logging.INFO)
+    if args.gui:
+        import gtk
+        gui = RP.gui.Gui()
+        gui.main.show()
+        gtk.main()
     for listener in args.type:
         listener.ip = args.ip
         events[listener.accept] = listener.handle
