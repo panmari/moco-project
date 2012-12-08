@@ -6,6 +6,7 @@ from helpers import memoize, do
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from threading import Thread
 from gtk import ListStore
+from datetime import datetime
 
 import logging
 logger = logging.getLogger('Reader')
@@ -35,7 +36,7 @@ class HttpHandler(object):
     Subclass and overwrite handle for great good."""
     def __init__(self, ip = None):
         self.ip = ip
-        self.gtk_list_store = ListStore(str)
+        self.gtk_list_store = ListStore(str, str)
 
     def accept(self, pkg):
         logger.debug("Accepting? %s", pkg.summary())
@@ -53,6 +54,8 @@ class HttpHandler(object):
 
     def print(self, pkg):
         logger.debug("got a package %s to print", pkg)
+        time = datetime.fromtimestamp(pkg.time)
+        logger.debug("initially at time={}".format(time))
         tcp_pkg = pkg[TCP]
         server_name = reverse_dns(pkg[IP].dst)
         match = GET.match(str(tcp_pkg.payload))
@@ -62,7 +65,7 @@ class HttpHandler(object):
             except TimeoutError:
                 entry = "http://{}/{}".format(str(pkg[IP].dst), match.group(1))
             logger.info(entry)
-            self.gtk_list_store.append(entry)
+            self.gtk_list_store.append((str(time), entry))
 
 
 class PcapEvents(object):
@@ -116,11 +119,10 @@ def start_parsing(path):
     pcap_file = PcapReader(path)
     evts = PcapEvents(pcap_file)
     http = HttpHandler()
-    evts[http.accept]= http.print
+    evts[http.accept]= http.handle
     thread = Thread(target=evts.all_packages)
-    thread.daemon= (True)
-    thread.start()
-    return http
+    thread.daemon = True
+    return (http, thread)
     
 if '__main__' == __name__:
     logging.basicConfig(level = logging.INFO)

@@ -1,12 +1,13 @@
 import sys
 import gtk
-import scapy
 import os.path
 from .. import reader
 from .. import version
-from pprint import pprint
+import logging
 
+gtk.gdk.threads_init()
 class Gui:
+    gui_logger = logging.getLogger("Gui")
 
     def __init__( self ):
         builder = gtk.Builder()
@@ -27,23 +28,26 @@ class Gui:
         
     def start_parsing(self, widget):
         try:
-            #todo: do this in new thread
-            http_handler = reader.start_parsing(self.pcap_file) 
+            self.gui_logger.debug("start parsing on {}".format(self.pcap_file))
+            http_handler, thread = reader.start_parsing(self.pcap_file) 
             self.packages_treeview.set_model(http_handler.gtk_list_store)
+            thread.start()
         except Exception as e:
             print e
             self.statusbar.push(3, str(e))
-            #raise error for debugging
-            raise 
+            self.gui_logger.warn(str(e))
+            raise e
     
     def file_chosen(self, widget):
         self.pcap_file = widget.get_filename()
         widget.hide()
+        self.gui_logger.info("Reading {}".format(self.pcap_file))
         self.statusbar.push(1, "Active file: " + self.pcap_file)
 
     def select_ip(self, widget):
         (model, iter) = widget.get_selected()
         value = model.get_value(iter, 0)
+        self.gui_logger.debug("Model {} chosen -- value {}".format(model, value))
         #TODO: get the ListStore for the respective model
         #self.packages_view.set_model(some_model)
         
@@ -52,7 +56,7 @@ class Gui:
 
     def quit(self, widget):
         gtk.main_quit()
-        print "Cleaning up .."
+        self.gui_logger.debug("Cleaning up ..")
         #TODO: cleanup
         sys.exit(1)
         
