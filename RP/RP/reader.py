@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from threading import Thread
 from gtk import ListStore
 from datetime import datetime
+import gobject
 
 import logging
 logger = logging.getLogger('Reader')
@@ -65,7 +66,9 @@ class HttpHandler(object):
             except TimeoutError:
                 entry = "http://{}/{}".format(str(pkg[IP].dst), match.group(1))
             logger.info(entry)
-            self.gtk_list_store.append((str(time), entry))
+            iter = self.gtk_list_store.append()
+            self.gtk_list_store.set(iter, 0, str(time))
+            self.gtk_list_store.set(iter, 1, entry)
 
 
 class PcapEvents(object):

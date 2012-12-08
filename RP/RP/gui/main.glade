@@ -298,9 +298,9 @@ Panmari</property>
                     <property name="can_focus">True</property>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                        <property name="sizing">fixed</property>
-                        <property name="fixed_width">150</property>
-                        <property name="min_width">2</property>
+                        <property name="resizable">True</property>
+                        <property name="sizing">autosize</property>
+                        <property name="min_width">150</property>
                         <property name="title" translatable="yes">Time</property>
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext2"/>
@@ -312,10 +312,14 @@ Panmari</property>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn2">
-                        <property name="min_width">2</property>
+                        <property name="min_width">300</property>
                         <property name="title" translatable="yes">Packages</property>
+                        <property name="expand">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
                         </child>
                       </object>
                     </child>
