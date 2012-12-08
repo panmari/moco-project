@@ -119,7 +119,7 @@ Panmari</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">asdf</col>
+        <col id="0" translatable="yes">ALL</col>
       </row>
     </data>
   </object>

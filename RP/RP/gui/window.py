@@ -21,7 +21,6 @@ class Gui:
         self.about.set_version(version)
         self.packages_treeview = builder.get_object("packages_treeview")
         self.ip_list = builder.get_object("liststore")
-        self.ip_list.append(["blah!"])
         
     def open_file(self, widget):
         self.file_chooser.show()
@@ -29,9 +28,9 @@ class Gui:
     def start_parsing(self, widget):
         try:
             self.gui_logger.debug("start parsing on {}".format(self.pcap_file))
-            http_handler, thread = reader.start_parsing(self.pcap_file) 
-            self.packages_treeview.set_model(http_handler.gtk_list_store)
-            http_handler.on_new_ip(self.new_ip)
+            self.http_handler, thread = reader.start_parsing(self.pcap_file) 
+            self.packages_treeview.set_model(self.http_handler.gtk_list_store)
+            self.http_handler.on_new_ip(self.new_ip)
             thread.start()
         except Exception as e:
             print e
@@ -41,6 +40,7 @@ class Gui:
 
     def new_ip(self, ip):
         self.gui_logger.info("New IP: {}".format(ip))
+        self.ip_list.append([ip])
     
     def file_chosen(self, widget):
         self.pcap_file = widget.get_filename()
@@ -52,6 +52,11 @@ class Gui:
         (model, iter) = widget.get_selected()
         value = model.get_value(iter, 0)
         self.gui_logger.debug("Model {} chosen -- value {}".format(model, value))
+        if value == "ALL":
+            self.packages_treeview.set_model(self.http_handler.gtk_list_store)
+        else:
+            self.packages_treeview.set_model(self.http_handler.list_store_for(value))
+
         #TODO: get the ListStore for the respective model
         #self.packages_view.set_model(some_model)
         

@@ -94,7 +94,7 @@ class QueenHandler(HttpHandler):
         self.ip_callbacks.append(callback)
 
     def list_store_for(self, ip):
-        self.children[ip].gtk_list_store
+        return self.children[ip].gtk_list_store
 
 
 class PcapEvents(object):
