@@ -33,10 +33,13 @@ class Gui:
             self.http_handler.on_new_ip(self.new_ip)
             thread.start()
         except Exception as e:
-            print e
             self.statusbar.push(3, str(e))
             self.gui_logger.warn(str(e))
             raise e
+
+    def on_ip_activated(self, widget, *args):
+        self.select_ip(widget)
+        
 
     def new_ip(self, ip):
         self.gui_logger.info("New IP: {}".format(ip))
@@ -49,12 +52,16 @@ class Gui:
         self.statusbar.push(1, "Active file: " + self.pcap_file)
 
     def select_ip(self, widget):
-        (model, iter) = widget.get_selected()
+        (model, iter) = widget.get_selection().get_selected()
         value = model.get_value(iter, 0)
         self.gui_logger.debug("Model {} chosen -- value {}".format(model, value))
         if value == "ALL":
-            self.packages_treeview.set_model(self.http_handler.gtk_list_store)
+            self.gui_logger.debug("Show ALL")
+            list_store = self.http_handler.gtk_list_store
+            self.gui_logger.debug("List store: {}".format(list_store))
+            self.packages_treeview.set_model(list_store)
         else:
+            self.gui_logger.debug("Show {}".format(value))
             self.packages_treeview.set_model(self.http_handler.list_store_for(value))
 
         #TODO: get the ListStore for the respective model

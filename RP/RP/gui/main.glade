@@ -258,6 +258,7 @@ Panmari</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="model">liststore</property>
+                <signal name="cursor-changed" handler="on_ip_activated" swapped="no"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="ip">
                     <property name="title" translatable="yes">Ip</property>
