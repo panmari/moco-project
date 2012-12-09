@@ -145,11 +145,17 @@ class PcapEvents(object):
         sniff(prn=self.handle_packet, filter="tcp", store=0)
 
 def start_parsing(path):
-    pcap_file = PcapReader(path)
-    evts = PcapEvents(pcap_file)
-    http = QueenHandler()
-    evts[http.accept]= http.handle
-    thread = Thread(target=evts.all_packages)
+    if (path == None):
+        evts = PcapEvents(None)
+        http = QueenHandler()
+        logger.debug("no file given, start sniffing")
+        thread = Thread(target=evts.setup_sniffer)
+    else:
+        pcap_file = PcapReader(path)
+        evts = PcapEvents(pcap_file)
+        http = QueenHandler()
+        evts[http.accept]= http.handle
+        thread = Thread(target=evts.all_packages)
     thread.daemon = True
     return (http, thread)
     

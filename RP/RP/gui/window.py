@@ -21,6 +21,7 @@ class Gui:
         self.about.set_version(version)
         self.packages_treeview = builder.get_object("packages_treeview")
         self.ip_list = builder.get_object("liststore")
+        self.pcap_file = None
         
     def open_file(self, widget):
         self.file_chooser.show()
@@ -36,7 +37,7 @@ class Gui:
             self.statusbar.push(3, str(e))
             self.gui_logger.warn(str(e))
             raise e
-
+        
     def on_ip_activated(self, widget, *args):
         self.select_ip(widget)
         
